@@ -1,0 +1,4 @@
+DEPARTMENT1,DEPARTMENT2,DEPARTMENT-X
+Course1_for_Department1, Course2_for_Department2, CourseX_for_Department1
+Course1_for_Department2, Course2_for_Department2, CourseX_for_Department2
+Course1_for_DepartmentX, Course2_for_DepartmentX, CourseX_for_DepartmentX

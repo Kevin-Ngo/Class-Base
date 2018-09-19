@@ -52,16 +52,13 @@ class Schedules:
         :return: None
         """
 
-        sorted_classes = []
-        number_of_courses = 0
+        almost_sorted_courses = []
 
         for department in self.open_courses:
             for course in department:
-                number_of_courses += 1
-                for class_ in course.get_classes():
-                    sorted_classes.append(class_)
+                almost_sorted_courses.append(course)
 
-        sorted_classes = sorted(sorted_classes, key=attrgetter('end', 'percent_full'))      # Sort based on two attributes, end time and how full the class is
+        sorted_courses = sorted(almost_sorted_courses, key=attrgetter('number_of_choices'))          # Sort the courses based on how many choices they have for classes (i.e. more choices are less prioritized)
 
     def __del__(self):
         """

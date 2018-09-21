@@ -1,7 +1,8 @@
 from selenium import webdriver                          # Allows access/navigation to websites that use JavaScript links
 from selenium.webdriver.support.ui import Select        # Easy way to select options from menus on a website
 import os                                               # Provides a way to use operating system dependent functions
-import platform as plat                                 # A way to grab information about the system
+import platform as plat                                 # A way to grab information about the system\
+from os import chmod
 
 
 def open_web_driver():
@@ -17,7 +18,9 @@ def open_web_driver():
     if "Windows" in op_system:
         driver_path += "\web_drivers\chromedriver.exe"
     else:
-        driver_path += "\web_drivers\chromedriver"
+        driver_path += "/web_drivers/chromedriver"
+        os.chmod(driver_path, 509)
+    print(driver_path)
     return webdriver.Chrome(driver_path)  # Create an instance of a Chrome WebDriver
 
 

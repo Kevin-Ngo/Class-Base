@@ -11,8 +11,8 @@ def get_classes(path_to_arguments=''):
     A function that web-scrapes using BeautifulSoup and Selenium to collect data on specified classes. This function is passed a *.txt file
     containing the classes to scrape for.
 
-    :param path_to_arguments: A string that is the path to the *.txt file containing information on which classes to scrape for.
-    :return: A list of departments (each department contains several courses and each course contains several classes)
+    :param path_to_arguments: A string that is the path to the *.txt file containing information on which classes to scrape.
+    :return: The term (a string) and a list of departments (each department contains several courses and each course contains several classes)
     """
 
     # Class Search URL
@@ -61,7 +61,7 @@ def get_classes(path_to_arguments=''):
     # Change option to only include courses if there is some space
     capacity_menu = driver.find_element_by_name("FullCourses")
     select = Select(capacity_menu)
-    select.select_by_value("SkipFullWaitlist")        # Select option to show classes that are full if there is room on the wait list
+    #select.select_by_value("SkipFullWaitlist")        # Select option to show classes that are full if there is room on the wait list
     #select.select_by_value("FullOnly")
     select = None
 
@@ -97,4 +97,4 @@ def get_classes(path_to_arguments=''):
             break
 
     driver.close()
-    return all_courses
+    return term, all_courses

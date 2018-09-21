@@ -1,5 +1,6 @@
 from scrape import class_scraper
+from class_schedule_solver import Schedules
 
-classes = class_scraper.get_classes()
-
-print("Testing Git")
+term, departments = class_scraper.get_classes()
+fall = Schedules(term, departments)
+fall.make_a_schedule()

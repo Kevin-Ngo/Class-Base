@@ -45,7 +45,7 @@ class Schedules:
             'Fri': 'FRIDAY'
         }
 
-    def make_early_schedule(self):
+    def make_a_schedule(self):
         """
         This function creates a schedule that prioritizes early classes and also writes this schedule to an Excel class schedule template.
 
@@ -53,12 +53,111 @@ class Schedules:
         """
 
         almost_sorted_courses = []
-
         for department in self.open_courses:
             for course in department:
                 almost_sorted_courses.append(course)
-
         sorted_courses = sorted(almost_sorted_courses, key=attrgetter('number_of_choices'))          # Sort the courses based on how many choices they have for classes (i.e. more choices are less prioritized)
+
+        some_what_sorted_classes = []
+        number_of_classes_required_total = 0
+        for course in sorted_courses:
+            some_what_sorted_classes += course.get_all_classes()
+            number_of_classes_required_total += course.get_number_of_required_classes()
+
+        possible_schedules = Schedules.find_schedules(some_what_sorted_classes)
+        filtered_schedules = Schedules.filter_schedules(possible_schedules, sorted_courses, number_of_classes_required_total)
+
+    @staticmethod
+    def filter_schedules(possible_schedules, sorted_courses, number_of_classes_required_total):
+        filtered_schedules = []
+
+        for schedule in possible_schedules.copy():
+            if len(schedule) < number_of_classes_required_total:
+                possible_schedules.remove(schedule)
+
+        for schedule in possible_schedules:
+            current_filtered_schedule = []
+            for course in sorted_courses:
+                course_name = course.get_name_of_course()
+                lab_fulfillment = False
+                discussion_fulfillment = False
+                lecture_fulfillment = False
+                for _class in schedule:
+                    if course_name == _class.name_of_course:
+                        class_type = _class.get_type()
+                        if course.has_lab() and class_type == 'Lab':
+                            if not lab_fulfillment:
+                                current_filtered_schedule.append(_class)
+                                lab_fulfillment = True
+                        elif course.has_discussion() and class_type == 'Dis':
+                            if not discussion_fulfillment:
+                                current_filtered_schedule.append(_class)
+                                discussion_fulfillment = True
+                        elif class_type == 'Lec' and not lecture_fulfillment:
+                            current_filtered_schedule.append(_class)
+                            lecture_fulfillment = True
+            if len(current_filtered_schedule) == number_of_classes_required_total:
+                filtered_schedules.append(current_filtered_schedule)
+        return filtered_schedules
+
+    @staticmethod
+    def find_schedules(class_list):
+        possible_schedules = []
+        for x in range(0, len(class_list)):
+            Schedules.find_schedules_helper(class_list, [], possible_schedules)
+            temp = class_list[0]
+            class_list.remove(class_list[0])
+            class_list.append(temp)
+        return possible_schedules
+
+    @staticmethod
+    def find_schedules_helper(current_class_list, current_schedule, collection_of_schedules):
+        current_schedule.append(current_class_list[0])
+        temp = current_class_list[0]
+        new_class_list = Schedules.remove_conflicts(temp, current_class_list.copy())
+        Schedules.remove_same_type(temp, new_class_list)
+
+        if len(new_class_list) == 0:
+            collection_of_schedules.append(current_schedule)
+        else:
+            Schedules.find_schedules_helper(new_class_list, current_schedule, collection_of_schedules)
+
+    @staticmethod
+    def remove_conflicts(chosen_class, class_list):
+        class_list.remove(chosen_class)             # It is already chosen so remove it from the list
+
+        for _class in class_list:
+            if Schedules.is_between(chosen_class, _class):
+                class_list.remove(_class)
+        return class_list
+
+    @staticmethod
+    def remove_same_type(chosen_class, class_list):
+        class_type = chosen_class.get_type()
+        name_of_course = chosen_class.get_name_of_course()
+        for _class in class_list.copy():
+            if (_class.get_type == class_type) and (_class.get_name_of_course() == name_of_course):
+                class_list.remove(_class)
+
+    @staticmethod
+    def is_between(class_a, class_b):
+        """
+        A function to check if "class b's" time overlaps "class_a's"
+
+        :param class_a: A class object
+        :param class_b: A class object
+        :return: True if it does overlap, False if the classes do not overlap
+        """
+
+        time_start_a, time_end_a = class_a.get_time()
+        time_start_b, time_end_b = class_b.get_time()
+
+        if (time_start_a < time_start_b) and (time_end_a < time_start_b):
+            return False
+        elif (time_start_b < time_start_a) and (time_end_b < time_start_a):
+            return False
+        else:
+            return True
 
     def __del__(self):
         """

@@ -93,6 +93,18 @@ class Course:
 
         return len(self.lab_classes)
 
+    def get_name_of_course(self):
+        return self.name_of_course
+
+    def get_all_classes(self):
+        """
+        A function to return all of the classes for the course.
+
+        :return: A list of classes.
+        """
+
+        return self.lecture_classes + self.discussion_classes + self.lab_classes
+
     def has_discussion(self):
         """
         A function that returns true if this course has discussion classes.
@@ -193,6 +205,12 @@ class Course:
             else:
                 return self.lecture_classes.copy()
 
+    def get_number_of_required_classes(self):
+        if self.need_both:
+            return 3
+        else:
+            return 2
+
     def __repr__(self):
         return "Name of course: " + self.name_of_course + "\n"
 
@@ -246,6 +264,15 @@ class Class:
         self.wait_list = wait_list
         self.status = status
         self.percent_full = float(enrolled) / capacity
+
+    def get_name_of_course(self):
+        return self.name_of_course
+
+    def get_type(self):
+        return self.type_of_class
+
+    def get_time(self):
+        return self.start, self.end
 
     def __lt__(self, other):
         return self.end < other.end

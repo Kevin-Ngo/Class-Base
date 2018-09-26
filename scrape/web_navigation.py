@@ -1,8 +1,8 @@
 from selenium import webdriver                          # Allows access/navigation to websites that use JavaScript links
 from selenium.webdriver.support.ui import Select        # Easy way to select options from menus on a website
 import os                                               # Provides a way to use operating system dependent functions
-import platform as plat                                 # A way to grab information about the system\
-from os import chmod
+import platform as plat                                 # A way to grab information about the system
+from os import chmod                                    # Change file permissions the first time
 
 
 def open_web_driver():

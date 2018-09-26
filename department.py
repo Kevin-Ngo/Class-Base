@@ -94,6 +94,11 @@ class Course:
         return len(self.lab_classes)
 
     def get_name_of_course(self):
+        """
+        A function to get the name of the course.
+
+        :return: A String that is the name of the course.
+        """
         return self.name_of_course
 
     def get_all_classes(self):
@@ -206,6 +211,11 @@ class Course:
                 return self.lecture_classes.copy()
 
     def get_number_of_required_classes(self):
+        """
+        A function that returns the number of required classes for the course. (i.e. If it needs a discussion or lab in addition to the lecture or both)
+
+        :return: An integer that represents how many classes are required to successfully enroll into the class.
+        """
         if self.need_both:
             return 3
         else:
@@ -263,15 +273,34 @@ class Class:
         self.enrolled = enrolled
         self.wait_list = wait_list
         self.status = status
-        self.percent_full = float(enrolled) / capacity
+        try:
+            self.percent_full = float(enrolled) / capacity
+        except ZeroDivisionError:
+            print("Class " + self.code + " is unavailable.")
+            self.percent_full = 1
 
     def get_name_of_course(self):
+        """
+        A function that returns the name of the course.
+
+        :return: A string that is the name of the course.
+        """
         return self.name_of_course
 
     def get_type(self):
+        """
+        A function that returns the type of class that the object is. (i.e. Lab, Lecture or Discussion)
+
+        :return: A string that is either "Lec", "Lab" or "Dis"
+        """
         return self.type_of_class
 
     def get_time(self):
+        """
+        A function that returns two strings that respectively represent the starting and ending time of the class.
+
+        :return: Two separate strings containing start and end times in the format HH:MM
+        """
         return self.start, self.end
 
     def __lt__(self, other):

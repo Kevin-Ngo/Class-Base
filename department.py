@@ -276,7 +276,7 @@ class Class:
         try:
             self.percent_full = float(enrolled) / capacity
         except ZeroDivisionError:
-            print("Class " + self.code + " is unavailable.")
+            print("Class " + str(self.code) + " (" + self.name_of_course + ")" + " is unavailable.")
             self.percent_full = 1
 
     def get_name_of_course(self):

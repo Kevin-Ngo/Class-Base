@@ -1,5 +1,6 @@
 from operator import attrgetter     # Sorting with custom objects (class objects)
 from openpyxl import load_workbook  # Output schedules to an Excel sheet
+from itertools import permutations
 
 
 class Schedules:
@@ -64,7 +65,7 @@ class Schedules:
             some_what_sorted_classes += course.get_all_classes()
             number_of_classes_required_total += course.get_number_of_required_classes()
 
-        possible_schedules = Schedules.find_schedules(some_what_sorted_classes)
+        possible_schedules = Schedules.find_schedules(some_what_sorted_classes, number_of_classes_required_total)
         filtered_schedules = Schedules.filter_schedules(possible_schedules, sorted_courses, number_of_classes_required_total)
 
     @staticmethod
@@ -101,13 +102,16 @@ class Schedules:
         return filtered_schedules
 
     @staticmethod
-    def find_schedules(class_list):
+    def find_schedules(class_list, number_of_classes_required_total):
         possible_schedules = []
-        for x in range(0, len(class_list)):
-            Schedules.find_schedules_helper(class_list, [], possible_schedules)
-            temp = class_list[0]
-            class_list.remove(class_list[0])
-            class_list.append(temp)
+        for class_ in class_list:
+            temp_class = class_
+            half_optimized_list = Schedules.remove_same_type(temp_class, class_list.copy())
+            optimized_list = Schedules.remove_conflicts(temp_class, half_optimized_list.copy())
+            for x in list(permutations(optimized_list, number_of_classes_required_total)):
+                Schedules.filter_schedules(possible_schedules, x, number_of_classes_required_total)
+                if len(possible_schedules) > 0:
+                    break
         return possible_schedules
 
     @staticmethod
@@ -116,6 +120,7 @@ class Schedules:
         temp = current_class_list[0]
         new_class_list = Schedules.remove_conflicts(temp, current_class_list.copy())
         Schedules.remove_same_type(temp, new_class_list)
+        current_class_list.remove(temp)
 
         if len(new_class_list) == 0:
             collection_of_schedules.append(current_schedule)
@@ -124,10 +129,10 @@ class Schedules:
 
     @staticmethod
     def remove_conflicts(chosen_class, class_list):
-        class_list.remove(chosen_class)             # It is already chosen so remove it from the list
+        #class_list.remove(chosen_class)             # It is already chosen so remove it from the list
 
         for _class in class_list:
-            if Schedules.is_between(chosen_class, _class):
+            if Schedules.is_between(chosen_class, _class) and not (chosen_class.code == _class.code):
                 class_list.remove(_class)
         return class_list
 
@@ -135,9 +140,13 @@ class Schedules:
     def remove_same_type(chosen_class, class_list):
         class_type = chosen_class.get_type()
         name_of_course = chosen_class.get_name_of_course()
-        for _class in class_list.copy():
-            if (_class.get_type == class_type) and (_class.get_name_of_course() == name_of_course):
-                class_list.remove(_class)
+        for _class in class_list:
+            if (_class.get_type() == class_type) and (_class.get_name_of_course() == name_of_course):
+                if chosen_class.code == _class.code:
+                    pass
+                else:
+                    class_list.remove(_class)
+        return class_list
 
     @staticmethod
     def is_between(class_a, class_b):
@@ -152,9 +161,9 @@ class Schedules:
         time_start_a, time_end_a = class_a.get_time()
         time_start_b, time_end_b = class_b.get_time()
 
-        if (time_start_a < time_start_b) and (time_end_a < time_start_b):
+        if ((time_start_a < time_start_b) and (time_end_a < time_start_b)) and (class_a.days == class_b.days):
             return False
-        elif (time_start_b < time_start_a) and (time_end_b < time_start_a):
+        elif ((time_start_b < time_start_a) and (time_end_b < time_start_a)) and (class_a.days == class_b.days):
             return False
         else:
             return True

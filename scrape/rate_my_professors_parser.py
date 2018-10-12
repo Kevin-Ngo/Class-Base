@@ -4,6 +4,11 @@ from bs4 import BeautifulSoup                           # Allows data to be extr
 from scrape import web_navigation
 
 def get_rating(name):
+    """
+    IN PROGRESS
+    :param name:
+    :return:
+    """
     rate_my_professors_url = 'www.ratemyprofessors.com'
     driver = web_navigation.open_web_driver()
 

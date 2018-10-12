@@ -29,7 +29,7 @@ def scrape_classes(soup_obj):
                 if (len(piece_of_info) != 5) and (counter == 0):                                            # Check to see if this is a class code or course title
                     if current_course is not None:                                                          # If the current_course is not None then that means it contains a course
                         courses.append(current_course)
-                    current_course = crs.Course(piece_of_info)                                              # Create a new course i.e. after adding ICS 6B now we are working on 31
+                    current_course = crs.Course(piece_of_info.rstrip().lstrip())                                 # Create a new course i.e. after adding ICS 6B now we are working on 31
                     counter -= 1                                                                            # Account for the automatic counter++ at the bottom.
                 elif (len(piece_of_info) == 5) and (counter == 0):                                          # If len is 5 and counter is at 0, then this is a course code, then etc. for the following
                     class_code = int(piece_of_info)
@@ -69,7 +69,7 @@ def scrape_classes(soup_obj):
         if counter > 0:                                                                                 # Since counter is greated than 0, then that means that we just gathered data for one class
             days_and_time = parse_day_and_time(days_and_time)                                           # Call the function "parse_day_and_time()" to get a list containing the days and meeting times
             current_class = crs.Class(
-                current_course.name_of_course, type_of_class, section, class_code, units, instructor, days_and_time[0],
+                current_course.get_name_of_course(), type_of_class, section, class_code, units, instructor, days_and_time[0],
                 days_and_time[1], days_and_time[2], place, final, capacity, enrolled,
                 wait_list, status
             )

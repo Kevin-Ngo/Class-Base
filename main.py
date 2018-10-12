@@ -1,6 +1,5 @@
 from scrape import class_scraper
-from class_schedule_solver import Schedules
+from genetic_algorithm.class_schedule_solver import make_a_schedule_using_ga
 
-term, departments = class_scraper.get_classes()
-fall = Schedules(term, departments)
-fall.make_a_schedule()
+term, departments = class_scraper.get_classes()         # Scrape the classes
+make_a_schedule_using_ga(departments)                   # Try to find a working schedule

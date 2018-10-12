@@ -1,4 +1,4 @@
-import bisect
+import bisect           # A way to easily keep custom objects sorted
 
 
 class Course:
@@ -7,12 +7,12 @@ class Course:
 
     Attributes:
         name_of_course (string): The name of the course.
-        lecture_classes (list of Class objects): The list containing open lecture classes in the named course.
-        discussion_classes (list of Class objects): The list containing open discussion classes in the named course.
-        lab_classes (list of Class objects): The list containing open lab classes in the named course.
-        discussions (Boolean value): True if this course contains discussion classes, else is false.
-        labs (Boolean value): True if this course contains lab classes, else is false.
-        need_both (Boolean value): True is a course requires both lab and discussion.
+        lecture_classes (list): The list of Class objects containing open lecture classes in the named course.
+        discussion_classes (list): The list of Class objects containing open discussion classes in the named course.
+        lab_classes (list): The list of Class objects containing open lab classes in the named course.
+        discussions (boolean): True if this course contains discussion classes, else is false.
+        labs (boolean): True if this course contains lab classes, else is false.
+        need_both (boolean): True is a course requires both lab and discussion.
         number_of_choices (integer): Contains the number of choices for a given type of class (e.g. if a course has 10 lectures open but only 1 lab open, then number of choices would be 1)
         number_of_choices_for_lecture (integer): Number of lecture classes available.
         number_of_choices_for_discussion (integer): Number of discussion classes available.
@@ -24,7 +24,7 @@ class Course:
         The constructor for the Course class.
 
         :param name_of_course: A string that is the name of the course.
-        :return: Nothing.
+        :return: Nothing
         """
 
         self.name_of_course = name_of_course
@@ -108,7 +108,17 @@ class Course:
         :return: A list of classes.
         """
 
-        return self.lecture_classes + self.discussion_classes + self.lab_classes
+        combined_classes = []
+        for _class in self.lab_classes:
+            combined_classes.append(_class)
+
+        for _class in self.discussion_classes:
+            combined_classes.append(_class)
+
+        for _class in self.lecture_classes:
+            combined_classes.append(_class)
+
+        return combined_classes
 
     def has_discussion(self):
         """
@@ -143,7 +153,7 @@ class Course:
 
         :param type_of_class: A string that describes the type of class being added, it can be either 'Lec', 'Dis', or 'Lab'
         :param new_class: A Class object that is to be added to the classes list.
-        :return: Nothing.
+        :return: Nothing
         """
 
         if type_of_class == 'Lec':
@@ -233,17 +243,17 @@ class Class:
         type_of_class (string): A string that represents the type of class that this is ('Lab', 'Lecture' or 'Discussion').
         name_of_course (string): The name of the course.
         section (string): A string that represents the Section number or letter identifier for an individual class.
-        code (int): An integer that represents the class code.
-        units (int): An integer that is the units of the class.
+        code (integer): An integer that represents the class code.
+        units (integer): An integer that is the units of the class.
         instructor (string): A string that is the full name of the instructor.
-        days (list of strings): A list of strings containing the days that the class meets.
-        start (int): An integer that is the start time of the class (military time).
-        end (int): An integer that is the end time of the class (military time).
+        days (list): A list of strings containing the days that the class meets.
+        start (integer): An integer that is the start time of the class (military time).
+        end (integer): An integer that is the end time of the class (military time).
         place (string): A string containing the location of the class.
         final (string): A string containing the finals day/date/time for the class.
-        capacity (int): An integer that represents the maximum number of enrolled students allowed in the class.
-        enrolled (int): An integer that represents the current number of enrolled students in the class.
-        wait_list (int): An integer representing the number of people on the wait list for a class.
+        capacity (integer): An integer that represents the maximum number of enrolled students allowed in the class.
+        enrolled (integer): An integer that represents the current number of enrolled students in the class.
+        wait_list (integer): An integer representing the number of people on the wait list for a class.
         status (string): A string that represents the status of the class ('Open' or 'New Only')
         percent_full (float): A float that represents the percentage full a class is, if over 80% full, will mark the
          class as nearly full.
@@ -291,7 +301,7 @@ class Class:
         """
         A function that returns the type of class that the object is. (i.e. Lab, Lecture or Discussion)
 
-        :return: A string that is either "Lec", "Lab" or "Dis"
+        :return: A string that is either "Lec", "Lab" or "Dis".
         """
         return self.type_of_class
 
@@ -299,18 +309,29 @@ class Class:
         """
         A function that returns two strings that respectively represent the starting and ending time of the class.
 
-        :return: Two separate strings containing start and end times in the format HH:MM
+        :return: Two separate strings containing start and end times in the format HH:MM.
         """
         return self.start, self.end
 
     def __lt__(self, other):
+        """
+        A way to compare objects.
+
+        :param other: Another Class object.
+        :return: A string of the smaller end time.
+        """
         return self.end < other.end
 
     def __repr__(self):
+        """
+        A way to print details of a Class object.
+
+        :return: A string of information pertaining to the Class object.
+        """
         return "Name of course: " + self.name_of_course + "\n"\
                 "Type of class: " + self.type_of_class + "\n"\
                 "Section: " + self.section + "\n "\
-                "Class code: " + self.code + "\n"\
+                "Class code: " + str(self.code) + "\n"\
                 "Units: " + self.units + "\n"\
                 "Instructor: " + self.instructor + "\n"\
                 "Class meeting times: " + self.days + self.start + " - " + self.end + "\n"\
@@ -320,4 +341,4 @@ class Class:
                 "Enrolled: " + self.enrolled + "\n"\
                 "Wait list: " + self.wait_list + "\n"\
                 "Status: " + self.status + "\n"\
-                "Percent full: " + self.percent_full + "\n"
+                "Percent full: " + str(self.percent_full) + "\n"

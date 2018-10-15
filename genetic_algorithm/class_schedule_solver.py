@@ -7,7 +7,7 @@ def make_a_schedule_using_ga(courses_per_department):
     :return: A list containing Class objects that together make a working_schedule.
     """
 
-    population_size = 5000                                          # Hard-coded starting population
+    population_size = 100                                          # Hard-coded starting population
     darwin = Evolution(courses_per_department, population_size)
     found_working_schedule = False
     current_population = darwin.get_starting_population()
@@ -26,8 +26,8 @@ def make_a_schedule_using_ga(courses_per_department):
         current_population = next_population
         generation_number += 1
 
-        if generation_number == 500:
-            current_population = darwin.get_starting_population(population_size)
+        if generation_number == 5000:
+            current_population = darwin.get_starting_population()
 
 
 def print_generation_information(population, generation_number):

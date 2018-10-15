@@ -1,7 +1,6 @@
 import numpy as np                                              # For more statistical functions
 from operator import attrgetter as atg                          # A way to sort custom objects
 from genetic_algorithm import schedule as sch                   # Manage 'individuals" (schedules)
-from genetic_algorithm.class_schedule_solver import is_between  # Function to check if classes conflict
 
 
 class Evolution:
@@ -59,6 +58,7 @@ class Evolution:
         :param schedule:
         :return:
         """
+        from genetic_algorithm.class_schedule_solver import is_between  # Function to check if classes conflict - late import to prevent circular importing
 
         class_list = schedule.get_class_list()
         fitness_score = 0.0
@@ -103,6 +103,7 @@ class Evolution:
                             fitness_score -= 1
                 counter += 1
 
+        fitness_score = float(fitness_score)/self.number_of_classes_required_total
         schedule.set_fitness_score(fitness_score)
         schedule.set_marked_list(marked_list)
 
@@ -128,13 +129,16 @@ class Evolution:
         parents = fittest + lucky_parents
         return parents
 
-    def get_next_generation(self, selected_parents, randomly_retain=0.03):
+    def get_next_generation(self, selected_parents, randomly_retain=0.3):
         """
         IN PROGRESS
         :param selected_parents:
         :param randomly_retain:
         :return:
         """
+
+        from genetic_algorithm.class_schedule_solver import remove_same_type
+        from genetic_algorithm.class_schedule_solver import remove_conflicts
 
         children = []
         target_size = self.population_size - len(selected_parents)
@@ -150,6 +154,28 @@ class Evolution:
                         random_index_father = np.random.randint(self.number_of_classes_required_total)
                         random_index_mother = np.random.randint(self.number_of_classes_required_total)
 
+                        if np.random.rand() > 0.3:
+                            if len(child) > 0:
+                                random_index_super_mutation = np.random.randint(len(child))
+                                save_this_gene = child[random_index_super_mutation]
+                                mutated_child = remove_same_type(save_this_gene, child)
+                                mutated_child = remove_conflicts(save_this_gene, child)
+                                child = mutated_child
+                                i = len(child)
+                                fathers_list = father.get_indices_of_marked()
+                                mothers_list = mother.get_indices_of_marked()
+
+                                for x in fathers_list:
+                                    father.get_class_list()[x] = self.class_list()[np.random.randint(len(self.class_list))]
+
+                                for y in mothers_list:
+                                    mother.get_class_list()[x] = self.class_list()[np.random.randint(len(self.class_list))]
+                                # while i < self.number_of_classes_required_total:
+                                #     lucky_index = np.random.randint(len(self.class_list))
+                                #     lucky_gene = self.class_list[lucky_index]
+                                #     child.append(lucky_gene)
+                                #     i += 1
+
                         marked_father = father.get_marked_list()[random_index_father]
                         marked_mother = mother.get_marked_list()[random_index_mother]
 
@@ -157,11 +183,11 @@ class Evolution:
                         mother_gene = mother.get_class_list()[random_index_mother]
 
                         if marked_father and (np.random.rand() > randomly_retain):
-                            random_index_father = np.random.randint(len(self.class_list) - 1)
+                            random_index_father = np.random.randint(len(self.class_list))
                             father_gene = self.class_list[random_index_father]
 
                         if marked_mother and (np.random.rand() > randomly_retain):
-                            random_index_mother = np.random.randint(len(self.class_list) - 1)
+                            random_index_mother = np.random.randint(len(self.class_list))
                             mother_gene = self.class_list[random_index_mother]
 
                         child.append(father_gene)
@@ -169,6 +195,7 @@ class Evolution:
                         if i < self.number_of_classes_required_total:
                             child.append(mother_gene)
                             i += 1
+
                     children.append(sch.Schedule(child))
 
         for schedule in selected_parents:

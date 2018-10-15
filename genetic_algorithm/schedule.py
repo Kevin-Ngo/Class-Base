@@ -68,3 +68,12 @@ class Schedule:
         """
 
         self.marked_list = marked_list
+
+    def get_indices_of_marked(self):
+        if len(self.marked_list) > 0:
+            index = 0
+            index_list = []
+            for mark in self.marked_list:
+                if mark is True:
+                    index_list.append(index)
+                index += 1

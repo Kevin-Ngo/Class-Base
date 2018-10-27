@@ -20,7 +20,9 @@ def make_a_schedule_using_ga(courses_per_department):
                 break
             darwin.rank_fitness(schedule)
 
-        print_generation_information(current_population, generation_number)
+        avg = print_generation_information(current_population, generation_number)
+        # if avg > 0.8:
+        #     c = ''
         selected_parents = darwin.select_parents(current_population)
         next_population = darwin.get_next_generation(selected_parents)
         current_population = next_population
@@ -28,6 +30,8 @@ def make_a_schedule_using_ga(courses_per_department):
 
         if generation_number == 5000:
             current_population = darwin.get_starting_population()
+        if generation_number % 10 == 0:
+            c = ''
 
 
 def print_generation_information(population, generation_number):
@@ -44,6 +48,7 @@ def print_generation_information(population, generation_number):
         total += score.fitness_score
     avg = float(total) / len(population)
     print('Generation: ' + str(generation_number) + ': ' + str(avg))
+    return avg
 
 
 def remove_conflicts(chosen_class, class_list):

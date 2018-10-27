@@ -77,3 +77,4 @@ class Schedule:
                 if mark is True:
                     index_list.append(index)
                 index += 1
+        return index_list

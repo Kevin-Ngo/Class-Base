@@ -7,7 +7,7 @@ def make_a_schedule_using_ga(courses_per_department):
     :return: A list containing Class objects that together make a working_schedule.
     """
 
-    population_size = 100                                          # Hard-coded starting population
+    population_size = 10000                                          # Hard-coded starting population
     darwin = Evolution(courses_per_department, population_size)
     found_working_schedule = False
     current_population = darwin.get_starting_population()
@@ -31,7 +31,16 @@ def make_a_schedule_using_ga(courses_per_department):
         if generation_number == 5000:
             current_population = darwin.get_starting_population()
         if generation_number % 10 == 0:
+            print_one_individual(current_population)
+        if generation_number % 20 == 0:
             c = ''
+
+
+def print_one_individual(current_population):
+    schedule = current_population[0]
+    class_list = schedule.get_class_list()
+    for _class in class_list:
+        print(str(_class.get_name_of_course()) + " " + str(_class.get_type()))
 
 
 def print_generation_information(population, generation_number):
@@ -66,6 +75,19 @@ def remove_conflicts(chosen_class, class_list):
                 class_list.remove(_class)
     return class_list
 
+# def purge_discussion(class_list):
+#     already_checked = {}
+#     remove_list = []
+#     for _class in class_list:
+#         check = _class
+#         course_name = _class.get_name_of_course()
+#         class_type = _class.get_type()
+#         for _class_again in class_list:
+#             if _class is _class_again:
+#                 continue
+#             elif (course_name == _class_again.get_name_of_course()) and (class_type == _class_again.get_type()):
+#
+
 
 def remove_same_type(chosen_class, class_list):
     """
@@ -99,9 +121,9 @@ def is_between(class_a, class_b):
     time_start_a, time_end_a = class_a.get_time()
     time_start_b, time_end_b = class_b.get_time()
 
-    if ((time_start_a < time_start_b) and (time_end_a < time_start_b)) and (class_a.days == class_b.days):
+    if ((time_end_a < time_start_b) and (time_start_a < time_start_b)) or (class_a.get_days() != class_b.get_days()):
         return False
-    elif ((time_start_b < time_start_a) and (time_end_b < time_start_a)) and (class_a.days == class_b.days):
+    elif (time_end_b < time_start_a) and (time_start_b < time_start_a):
         return False
     else:
         return True

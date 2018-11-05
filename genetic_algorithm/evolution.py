@@ -46,9 +46,23 @@ class Evolution:
         population = []
         for x in range(self.population_size):
             individual = []
-            for y in range(self.number_of_classes_required_total):
-                index = np.random.randint(0, len(self.class_list) - 1)
-                individual.append(self.class_list[index])
+            # for y in range(self.number_of_classes_required_total):
+            #     index = np.random.randint(0, len(self.class_list))
+            #     individual.append(self.class_list[index])
+            for course in self.course_list:
+                lecture_list = course.get_lecture_classes()
+                discussion_list = course.get_discussion_classes()
+                lab_list = course.get_lab_classes()
+
+                if len(lecture_list) > 0:
+                    index = np.random.randint(0, len(lecture_list))
+                    individual.append(lecture_list[index])
+                if len(discussion_list) > 0:
+                    index = np.random.randint(0, len(discussion_list))
+                    individual.append(discussion_list[index])
+                if len(lab_list) > 0:
+                    index = np.random.randint(0, len(lab_list))
+                    individual.append(lab_list[index])
             population.append(sch.Schedule(individual))                 # Append 'Schedule' objects to the population
         return population
 
@@ -77,8 +91,10 @@ class Evolution:
             for _class_again in class_list:
                 if course_name in already_checked.keys():
                     break
+                elif _class is _class_again:
+                    continue
 
-                if (_class is not _class_again) or is_between(_class, _class_again):  # check time conflictions
+                if (_class is not _class_again) and is_between(_class, _class_again):  # check time conflictions
                     marked_list[counter] = True
                     fitness_score -= 1
 
@@ -92,6 +108,7 @@ class Evolution:
                         else:
                             marked_list[counter] = True
                             lab_counter += 1
+                            #fitness_score -= 1
                     elif course.has_discussion() and class_type == 'Dis':
                         if not discussion_fulfillment:
                             discussion_fulfillment = True
@@ -100,31 +117,32 @@ class Evolution:
                         else:
                             marked_list[counter] = True
                             discussion_counter += 1
+                            #fitness_score -= 1
                     elif class_type == 'Lec':
                         if not lecture_fulfillment:
                             lecture_fulfillment = True
                             lecture_counter += 1
                         else:
                             marked_list[counter] = True
-                            fitness_score -= 1
+                            #fitness_score -= 1
                 counter += 1
 
             lab_discussion_lecture = [lab_fulfillment, discussion_fulfillment, lecture_fulfillment]
             already_checked[course_name] = lab_discussion_lecture
 
-        if lecture_counter > 1:
-            fitness_score -= 1
-        if discussion_counter > 1:
-            fitness_score -= 1
-        if lab_counter > 1:
-            fitness_score -= 1
+        # if lecture_counter > 1:
+        #     fitness_score -= 1
+        # if discussion_counter > 1:
+        #     fitness_score -= 1
+        # if lab_counter > 1:
+        #     fitness_score -= 1
 
         fitness_score = float(fitness_score)/self.number_of_classes_required_total
         schedule.set_fitness_score(fitness_score)
         schedule.set_marked_list(marked_list)
 
     @staticmethod
-    def select_parents(population, retain_rate=0.3, randomly_retain=0.03):
+    def select_parents(population, retain_rate=0.4, randomly_retain=0.03):
         """
         This function selects parents (most fit schedules) out of the current population of 'Schedule' objects that have fitness scores.
 
@@ -145,7 +163,7 @@ class Evolution:
         parents = fittest + lucky_parents
         return parents
 
-    def get_next_generation(self, selected_parents, randomly_retain=0.7):
+    def get_next_generation(self, selected_parents, randomly_retain=0.1):
         """
         IN PROGRESS
         :param selected_parents:
@@ -155,6 +173,7 @@ class Evolution:
 
         from genetic_algorithm.class_schedule_solver import remove_same_type
         from genetic_algorithm.class_schedule_solver import remove_conflicts
+        from genetic_algorithm.class_schedule_solver import is_between
 
         children = []
         target_size = self.population_size - len(selected_parents)
@@ -167,33 +186,120 @@ class Evolution:
                     child = []
                     i = 0
                     while i < self.number_of_classes_required_total:
-                        random_index_father = np.random.randint(self.number_of_classes_required_total)
-                        random_index_mother = np.random.randint(self.number_of_classes_required_total)
+                        # random_index_father = np.random.randint(self.number_of_classes_required_total)
+                        # random_index_mother = np.random.randint(self.number_of_classes_required_total)
 
-                        if np.random.rand() > 0.001:
+                        for course in self.course_list:
+                            lab_classes = []
+                            discussion_classes = []
+                            lecture_classes = []
+                            combined = father.get_class_list() + mother.get_class_list()
+                            for _class in combined:
+                                if self.dict_for_class_to_course[_class] == course:
+                                    if _class.get_type() == 'Lab':
+                                        lab_classes.append(_class)
+                                    elif _class.get_type() == 'Dis':
+                                        discussion_classes.append(_class)
+                                    else:
+                                        lecture_classes.append(_class)
+
+                            child.append(lecture_classes[np.random.randint(0, len(lecture_classes))])
+                            i += 1
+                            if course.has_lab():
+                                child.append(lab_classes[np.random.randint(0, len(lab_classes))])
+                                i += 1
+                            if course.has_discussion():
+                                child.append(discussion_classes[np.random.randint(0, len(discussion_classes))])
+                                i += 1
+
+                        if np.random.rand() > randomly_retain:
                             if len(child) > 0:
                                 random_index_super_mutation = np.random.randint(len(child))
-                                save_this_gene = child[random_index_super_mutation]
-                                mutated_child = remove_same_type(save_this_gene, child.copy())
-                                mutated_child = remove_conflicts(save_this_gene, child.copy())
-                                child = mutated_child
-                                i = len(child)
-                                fathers_list = father.get_indices_of_marked()
-                                mothers_list = mother.get_indices_of_marked()
+                                change_this_gene = child[random_index_super_mutation]
+                                course_for_gene = self.dict_for_class_to_course[change_this_gene]
+                                choices = None
+                                if change_this_gene.get_type() == 'Lab':
+                                    choices = course_for_gene.get_lab_classes()
+                                elif change_this_gene.get_type() == 'Dis':
+                                    choices = course_for_gene.get_discussion_classes()
+                                else:
+                                    choices = course_for_gene.get_lecture_classes()
 
-                                for x in fathers_list:
-                                    #if np.random.rand() > randomly_retain:
-                                    father.get_class_list()[x] = self.class_list[np.random.randint(len(self.class_list))]
+                                if len(choices) > 1:
+                                    rand_index = np.random.randint(len(choices))
+                                    replace_with = change_this_gene
+                                    while change_this_gene is replace_with:
+                                        replace_with = choices[rand_index]
+                                        rand_index = np.random.randint(len(choices))
+                                    child[random_index_super_mutation] = replace_with
 
-                                for y in mothers_list:
-                                    #if np.random.rand() > randomly_retain:
-                                    mother.get_class_list()[y] = self.class_list[np.random.randint(len(self.class_list))]
+                        if np.random.rand() > 0.1:
+                            child = []
+                            for course in self.course_list:
+                                lecture_list = course.get_lecture_classes()
+                                discussion_list = course.get_discussion_classes()
+                                lab_list = course.get_lab_classes()
 
-                        marked_father = father.get_marked_list()[random_index_father]
-                        marked_mother = mother.get_marked_list()[random_index_mother]
+                                if len(lecture_list) > 0:
+                                    index = np.random.randint(0, len(lecture_list))
+                                    child.append(lecture_list[index])
+                                if len(discussion_list) > 0:
+                                    index = np.random.randint(0, len(discussion_list))
+                                    child.append(discussion_list[index])
+                                if len(lab_list) > 0:
+                                    index = np.random.randint(0, len(lab_list))
+                                    child.append(lab_list[index])
 
-                        father_gene = father.get_class_list()[random_index_father]
-                        mother_gene = mother.get_class_list()[random_index_mother]
+                        if np.random.rand() > 0.03:
+                            for _class in child:
+                                for _class_again in child:
+                                    if (_class is not _class_again) and is_between(_class, _class_again):
+                                        course_for_class = self.dict_for_class_to_course[_class]
+                                        course_for_class_again = self.dict_for_class_to_course[_class_again]
+                                        type_for_class = _class.get_type()
+                                        type_for_class_again = _class_again.get_type()
+                                        type = None
+
+                                        if np.random.randint(0, 2) == 1:
+                                            replace_index = child.index(_class_again)
+                                            lecture_classes = course_for_class_again.get_lecture_classes()
+                                            discussion_classes = course_for_class_again.get_discussion_classes()
+                                            lab_classes = course_for_class_again.get_lab_classes()
+                                            type = type_for_class_again
+                                        else:
+                                            replace_index = child.index(_class)
+                                            lecture_classes = course_for_class.get_lecture_classes()
+                                            discussion_classes = course_for_class.get_discussion_classes()
+                                            lab_classes = course_for_class.get_lab_classes()
+                                            type = type_for_class
+
+                                        if type == 'Lec':
+                                            child[replace_index] = lecture_classes[np.random.randint(0, len(lecture_classes))]
+                                        elif type == 'Dis':
+                                            child[replace_index] = discussion_classes[np.random.randint(0, len(discussion_classes))]
+                                        else:
+                                            child[replace_index] = lab_classes[np.random.randint(0, len(discussion_classes))]
+
+                                # mutated_child = remove_same_type(change_this_gene, child.copy())
+                                # mutated_child = remove_conflicts(change_this_gene, mutated_child)
+                                # child = mutated_child
+                                # i = len(child)
+                                # fathers_list = father.get_indices_of_marked()
+                                # mothers_list = mother.get_indices_of_marked()
+                                #
+                                # for x in fathers_list:
+                                #     if np.random.rand() > randomly_retain:
+                                #         father.get_class_list()[x] = self.class_list[np.random.randint(len(self.class_list))]
+                                #
+                                # for y in mothers_list:
+                                #     if np.random.rand() > randomly_retain:
+                                #         mother.get_class_list()[y] = self.class_list[np.random.randint(len(self.class_list))]
+
+                        # marked_father = father.get_marked_list()[random_index_father]
+                        # marked_mother = mother.get_marked_list()[random_index_mother]
+
+                        # father_gene = father.get_class_list()[random_index_father]
+                        # mother_gene = mother.get_class_list()[random_index_mother]
 
                         # For some reason, commenting out this code, yields better results.
 
@@ -205,23 +311,33 @@ class Evolution:
                         #     random_index_mother = np.random.randint(len(self.class_list))
                         #     mother_gene = self.class_list[random_index_mother]
 
-                        child.append(father_gene)
-                        i += 1
-                        if i < self.number_of_classes_required_total:
-                            child.append(mother_gene)
-                            i += 1
+                        # child.append(father_gene)
+                        # i += 1
+                        # if i < self.number_of_classes_required_total:
+                        #     child.append(mother_gene)
+                        #     i += 1
 
                     children.append(sch.Schedule(child))
 
-        for schedule in selected_parents:
-            m_list = [False] * len(schedule.get_class_list())
-            schedule.set_marked_list(m_list)
+        # for schedule in selected_parents:
+        #     m_list = [False] * len(schedule.get_class_list())
+        #     schedule.set_marked_list(m_list)
 
         next_population = children + selected_parents
         return next_population
 
     # @staticmethod
     # def purge(father, mother):
+
+    # @staticmethod
+    # def select_genes_from_parents(father, mother):
+    #
+    #
+    # def organize_genes(individual):
+    #     genes = individual.get_class_list()
+    #     for course in self.course_list:
+    #         for _class in genes:
+    #             if self.dict_for_class_to_course[_class] ==
 
     def satisfied_requirements(self, schedule):
         """

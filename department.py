@@ -297,6 +297,9 @@ class Class:
         """
         return self.name_of_course
 
+    def get_days(self):
+        return self.days
+
     def get_type(self):
         """
         A function that returns the type of class that the object is. (i.e. Lab, Lecture or Discussion)

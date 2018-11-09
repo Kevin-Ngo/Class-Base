@@ -1,39 +1,43 @@
 from genetic_algorithm.evolution import Evolution       # A Class to manage Evolution of Schedules
+from class_base_exceptions import WorkingScheduleNotFound
 
 
-def make_a_schedule_using_ga(courses_per_department):
+def get_schedules_using_ga(courses_per_department):
     """
     IN PROGRESS
     :return: A list containing Class objects that together make a working_schedule.
     """
 
-    population_size = 10000                                          # Hard-coded starting population
+    population_size = 100                                          # Hard-coded starting population
     darwin = Evolution(courses_per_department, population_size)
     found_working_schedule = False
     current_population = darwin.get_starting_population()
     generation_number = 0
+    working_schedules = []
 
     while not found_working_schedule:
         for schedule in current_population:
-            if darwin.satisfied_requirements(schedule):
+            if satisfied_requirements(schedule):
                 found_working_schedule = True
-                break
+                working_schedules.append(schedule)
             darwin.rank_fitness(schedule)
 
-        avg = print_generation_information(current_population, generation_number)
-        # if avg > 0.8:
-        #     c = ''
+        # avg = print_generation_information(current_population, generation_number)
         selected_parents = darwin.select_parents(current_population)
         next_population = darwin.get_next_generation(selected_parents)
         current_population = next_population
         generation_number += 1
 
-        if generation_number == 5000:
+        if generation_number == 100:
             current_population = darwin.get_starting_population()
-        if generation_number % 10 == 0:
-            print_one_individual(current_population)
-        if generation_number % 20 == 0:
-            c = ''
+        if generation_number == 200:
+            raise WorkingScheduleNotFound
+        # if generation_number % 10 == 0:
+        #     print_one_individual(current_population)
+        # if generation_number % 20 == 0:
+        #     print_conflicts(current_population[0].class_list)
+
+    return working_schedules
 
 
 def print_one_individual(current_population):
@@ -75,18 +79,22 @@ def remove_conflicts(chosen_class, class_list):
                 class_list.remove(_class)
     return class_list
 
-# def purge_discussion(class_list):
-#     already_checked = {}
-#     remove_list = []
-#     for _class in class_list:
-#         check = _class
-#         course_name = _class.get_name_of_course()
-#         class_type = _class.get_type()
-#         for _class_again in class_list:
-#             if _class is _class_again:
-#                 continue
-#             elif (course_name == _class_again.get_name_of_course()) and (class_type == _class_again.get_type()):
-#
+
+def print_conflicts(class_list):
+    for _class in class_list:
+        for _class_again in class_list:
+            if is_between(_class_again, _class) and not (_class_again.code == _class.code):
+                print(_class)
+
+
+def satisfied_requirements(schedule):
+    class_list = schedule.class_list
+    satisfied = True
+    for _class in class_list:
+        for _class_again in class_list:
+            if is_between(_class_again, _class) and not (_class_again.code == _class.code):
+                satisfied = False
+    return satisfied
 
 
 def remove_same_type(chosen_class, class_list):
@@ -120,6 +128,9 @@ def is_between(class_a, class_b):
 
     time_start_a, time_end_a = class_a.get_time()
     time_start_b, time_end_b = class_b.get_time()
+
+    if time_start_a == 'TBA' or time_end_b == 'TBA':
+        return False
 
     if ((time_end_a < time_start_b) and (time_start_a < time_start_b)) or (class_a.get_days() != class_b.get_days()):
         return False

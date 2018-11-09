@@ -11,3 +11,8 @@ class InvalidDepartment(ParseError):
 class InvalidCourse(ParseError):
     """An invalid course code was entered."""
     pass
+
+
+class WorkingScheduleNotFound(Exception):
+    """Working schedule was unable to be made, due to number of classes or availability."""
+    pass

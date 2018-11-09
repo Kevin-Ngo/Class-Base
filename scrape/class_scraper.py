@@ -1,8 +1,8 @@
 from selenium.webdriver.support.ui import Select        # Easy way to select options from menus on a website
 from bs4 import BeautifulSoup                           # Allows data to be extracted from websites
 from scrape import web_navigation                       # Provides user-defined functions to navigate the selenium webdriver
-from scrape.parse_exceptions import InvalidCourse       # Exceptions while parsing
-from scrape.parse_exceptions import InvalidDepartment   # Exceptions while parsing
+from class_base_exceptions import InvalidCourse       # Exceptions while parsing
+from class_base_exceptions import InvalidDepartment   # Exceptions while parsing
 from scrape.class_parser import scrape_classes          # Functions to scrape classes from UCI departments
 
 
@@ -61,7 +61,7 @@ def get_classes(path_to_arguments=''):
     # Change option to only include courses if there is some space
     capacity_menu = driver.find_element_by_name("FullCourses")
     select = Select(capacity_menu)
-    #select.select_by_value("SkipFullWaitlist")        # Select option to show classes that are full if there is room on the wait list
+    select.select_by_value("SkipFullWaitlist")        # Select option to show classes that are full if there is room on the wait list
     #select.select_by_value("FullOnly")
     select = None
 
@@ -97,4 +97,8 @@ def get_classes(path_to_arguments=''):
             break
 
     driver.close()
+    # for dpt in all_courses:
+    #     for course in dpt:
+    #         course.remove_faulty()
+
     return term, all_courses

@@ -1,6 +1,6 @@
 import numpy as np                                              # For more statistical functions
 from operator import attrgetter as atg                          # A way to sort custom objects
-from genetic_algorithm import schedule as sch                   # Manage 'individuals" (schedules)
+import schedule as sch
 
 
 class Evolution:
@@ -171,10 +171,6 @@ class Evolution:
         :return:
         """
 
-        from genetic_algorithm.class_schedule_solver import remove_same_type
-        from genetic_algorithm.class_schedule_solver import remove_conflicts
-        from genetic_algorithm.class_schedule_solver import is_between
-
         children = []
         target_size = self.population_size - len(selected_parents)
 
@@ -250,35 +246,35 @@ class Evolution:
                                     index = np.random.randint(0, len(lab_list))
                                     child.append(lab_list[index])
 
-                        if np.random.rand() > 0.03:
-                            for _class in child:
-                                for _class_again in child:
-                                    if (_class is not _class_again) and is_between(_class, _class_again):
-                                        course_for_class = self.dict_for_class_to_course[_class]
-                                        course_for_class_again = self.dict_for_class_to_course[_class_again]
-                                        type_for_class = _class.get_type()
-                                        type_for_class_again = _class_again.get_type()
-                                        type = None
-
-                                        if np.random.randint(0, 2) == 1:
-                                            replace_index = child.index(_class_again)
-                                            lecture_classes = course_for_class_again.get_lecture_classes()
-                                            discussion_classes = course_for_class_again.get_discussion_classes()
-                                            lab_classes = course_for_class_again.get_lab_classes()
-                                            type = type_for_class_again
-                                        else:
-                                            replace_index = child.index(_class)
-                                            lecture_classes = course_for_class.get_lecture_classes()
-                                            discussion_classes = course_for_class.get_discussion_classes()
-                                            lab_classes = course_for_class.get_lab_classes()
-                                            type = type_for_class
-
-                                        if type == 'Lec':
-                                            child[replace_index] = lecture_classes[np.random.randint(0, len(lecture_classes))]
-                                        elif type == 'Dis':
-                                            child[replace_index] = discussion_classes[np.random.randint(0, len(discussion_classes))]
-                                        else:
-                                            child[replace_index] = lab_classes[np.random.randint(0, len(discussion_classes))]
+                        # if np.random.rand() > 0.03:
+                        #     for _class in child:
+                        #         for _class_again in child:
+                        #             if (_class is not _class_again) and is_between(_class, _class_again):
+                        #                 course_for_class = self.dict_for_class_to_course[_class]
+                        #                 course_for_class_again = self.dict_for_class_to_course[_class_again]
+                        #                 type_for_class = _class.get_type()
+                        #                 type_for_class_again = _class_again.get_type()
+                        #                 type = None
+                        #
+                        #                 if np.random.randint(0, 2) == 1:
+                        #                     replace_index = child.index(_class_again)
+                        #                     lecture_classes = course_for_class_again.get_lecture_classes()
+                        #                     discussion_classes = course_for_class_again.get_discussion_classes()
+                        #                     lab_classes = course_for_class_again.get_lab_classes()
+                        #                     type = type_for_class_again
+                        #                 else:
+                        #                     replace_index = child.index(_class)
+                        #                     lecture_classes = course_for_class.get_lecture_classes()
+                        #                     discussion_classes = course_for_class.get_discussion_classes()
+                        #                     lab_classes = course_for_class.get_lab_classes()
+                        #                     type = type_for_class
+                        #
+                        #                 if type == 'Lec':
+                        #                     child[replace_index] = lecture_classes[np.random.randint(0, len(lecture_classes))]
+                        #                 elif type == 'Dis':
+                        #                     child[replace_index] = discussion_classes[np.random.randint(0, len(discussion_classes))]
+                        #                 else:
+                        #                     child[replace_index] = lab_classes[np.random.randint(0, len(discussion_classes))]
 
                                 # mutated_child = remove_same_type(change_this_gene, child.copy())
                                 # mutated_child = remove_conflicts(change_this_gene, mutated_child)
@@ -338,6 +334,12 @@ class Evolution:
     #     for course in self.course_list:
     #         for _class in genes:
     #             if self.dict_for_class_to_course[_class] ==
+
+    def print_conflicts(class_list):
+        for _class in class_list:
+            for _class_again in class_list:
+                if is_between(_class_again, _class) and not (_class_again.code == _class.code):
+                    print(_class)
 
     def satisfied_requirements(self, schedule):
         """

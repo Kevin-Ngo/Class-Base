@@ -1,6 +1,6 @@
 import re                               # Use Regular Expressions to look for or fix specific string patterns
 import department as crs                # A way to organize courses and classes
-from scrape import parse_exceptions     # Exceptions when parsing each department for its classes
+import class_base_exceptions
 
 
 def scrape_classes(soup_obj):
@@ -14,7 +14,7 @@ def scrape_classes(soup_obj):
 
     for divTag in soup_obj.find_all('div', style="color: red; font-weight: bold;"):
         if divTag.text == "\n\tNo courses matched your search criteria for this term.\n\n":
-            raise parse_exceptions.InvalidCourse
+            raise class_base_exceptions.InvalidCourse
 
     type_of_class = section = class_code = units = instructor = days_and_time = place = final = None        # Parameters of a "Class" object
     capacity = enrolled = wait_list = status = None
@@ -29,7 +29,8 @@ def scrape_classes(soup_obj):
                 if (len(piece_of_info) != 5) and (counter == 0):                                            # Check to see if this is a class code or course title
                     if current_course is not None:                                                          # If the current_course is not None then that means it contains a course
                         courses.append(current_course)
-                    current_course = crs.Course(piece_of_info.rstrip().lstrip())                                 # Create a new course i.e. after adding ICS 6B now we are working on 31
+                    name = remove_prerequisite(piece_of_info.rstrip().lstrip())
+                    current_course = crs.Course(name)                                                       # Create a new course i.e. after adding ICS 6B now we are working on 31
                     counter -= 1                                                                            # Account for the automatic counter++ at the bottom.
                 elif (len(piece_of_info) == 5) and (counter == 0):                                          # If len is 5 and counter is at 0, then this is a course code, then etc. for the following
                     class_code = int(piece_of_info)
@@ -49,7 +50,7 @@ def scrape_classes(soup_obj):
                     if type_of_class == "Lec":                                                              # Only lecture classes have finals displayed
                         final = piece_of_info
                     else:
-                        final = "None"
+                        final = ""
                 elif counter == 8:
                     capacity = piece_of_info
                     if piece_of_info.isdigit():
@@ -117,3 +118,16 @@ def parse_day_and_time(days_and_time):
     fixed_days_and_time = [almost_fixed_days_and_time[0], start_time, end_time]
 
     return fixed_days_and_time
+
+
+def remove_prerequisite(name_of_course):
+    split = name_of_course.split()
+    save = ''
+    _continue = True
+    for word in split:
+        if word == '(Prerequisites)':
+            _continue = False
+        elif _continue:
+            save += word + ' '
+    save.strip()
+    return save

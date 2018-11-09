@@ -27,7 +27,7 @@ class Course:
         :return: Nothing
         """
 
-        self.name_of_course = name_of_course
+        self.full_name_of_course = name_of_course
         self.lecture_classes = []
         self.discussion_classes = []
         self.lab_classes = []
@@ -99,7 +99,7 @@ class Course:
 
         :return: A String that is the name of the course.
         """
-        return self.name_of_course
+        return self.full_name_of_course
 
     def get_all_classes(self):
         """
@@ -177,6 +177,20 @@ class Course:
         if (self.labs is True) and (self.discussions is True):
             self.need_both = True
 
+    # def remove_faulty(self):
+    #     disc = self.discussion_classes.copy()
+    #     lec = self.lecture_classes.copy()
+    #     lab = self.lab_classes.copy()
+    #     for ddisc in disc:
+    #         if ddisc.start == 'TBA':
+    #             self.discussion_classes.remove(ddisc)
+    #     for llec in lec:
+    #         if llec.start == 'TBA':
+    #             self.lecture_classes.remove(llec)
+    #     for llab in lab:
+    #         if llab.start == 'TBA':
+    #             self.lab_classes.remove(llab)
+
     def get_type_with_least_choices(self):
         """
         A function to return the type of class with the least amount of choices (i.e. priotitized in scheduling precedence).
@@ -232,7 +246,7 @@ class Course:
             return 2
 
     def __repr__(self):
-        return "Name of course: " + self.name_of_course + "\n"
+        return "Name of course: " + self.full_name_of_course + "\n"
 
 
 class Class:
@@ -247,8 +261,8 @@ class Class:
         units (integer): An integer that is the units of the class.
         instructor (string): A string that is the full name of the instructor.
         days (list): A list of strings containing the days that the class meets.
-        start (integer): An integer that is the start time of the class (military time).
-        end (integer): An integer that is the end time of the class (military time).
+        start (string): An string that is the start time of the class (military time).
+        end (string): An string that is the end time of the class (military time).
         place (string): A string containing the location of the class.
         final (string): A string containing the finals day/date/time for the class.
         capacity (integer): An integer that represents the maximum number of enrolled students allowed in the class.
@@ -283,6 +297,8 @@ class Class:
         self.enrolled = enrolled
         self.wait_list = wait_list
         self.status = status
+        self.normal_time_start = None
+        self.normal_time_end = None
         try:
             self.percent_full = float(enrolled) / capacity
         except ZeroDivisionError:
@@ -315,6 +331,67 @@ class Class:
         :return: Two separate strings containing start and end times in the format HH:MM.
         """
         return self.start, self.end
+
+    def update_time_to_normal_format(self):
+        """
+
+        :return:
+        """
+
+        if self.start == 'TBA':
+            self.normal_time_start = self.normal_time_end = 'TBA'
+        else:
+            normal_time = None
+            pm = False
+            temp_time = self.start.split(':')
+            temp_time[0] = int(temp_time[0])
+            if temp_time[0] > 12:
+                pm = True
+                temp_time[0] -= 12
+
+            normal_time = str(temp_time[0]) + ':' + temp_time[1]
+
+            if pm or temp_time[0] == 12:
+                normal_time += ' PM'
+            else:
+                normal_time += ' AM'
+
+            self.normal_time_start = normal_time
+
+            normal_time = None
+            pm = False
+            temp_time = self.end.split(':')
+            temp_time[0] = int(temp_time[0])
+            if temp_time[0] > 12:
+                pm = True
+                temp_time[0] -= 12
+
+            normal_time = str(temp_time[0]) + ':' + temp_time[1]
+
+            if pm or temp_time[0] == 12:
+                normal_time += ' PM'
+            else:
+                normal_time += ' AM'
+
+            self.normal_time_end = normal_time
+
+    def get_days_as_list(self):
+        if self.start == 'TBA':
+            return ['']
+        if self.days[0] == 'M':
+            if len(self.days) == 1:
+                return ['M']
+            elif len(self.days) == 2:
+                return ['M', 'W']
+            elif len(self.days) == 3:
+                return ['M', 'W', 'F']
+        elif self.days[0] == 'T':
+            if len(self.days) == 2:
+                return ['Tu']
+            elif len(self.days) == 4:
+                return ['Tu', 'Th']
+        else:
+            return ['F']
 
     def __lt__(self, other):
         """

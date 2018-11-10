@@ -1,5 +1,6 @@
 from openpyxl import load_workbook  # Output schedules to an Excel sheet
 
+
 def export(term, working_schedule):
     """
     IN PROGRESS

@@ -18,8 +18,8 @@ def get_classes(path_to_arguments=''):
     # Class Search URL
     class_search_url = "https://www.reg.uci.edu/perl/WebSoc/"
 
-    driver = web_navigation.open_web_driver()             # Create an instance of a Chrome WebDriver
-    driver.get(class_search_url)                          # Open the class schedule
+    driver = web_navigation.open_web_driver()                                           # Create an instance of a Chrome WebDriver
+    driver.get(class_search_url)                                                        # Open the class schedule
 
     # Scrape the term name
     select = Select(driver.find_element_by_name("YearTerm"))
@@ -33,7 +33,7 @@ def get_classes(path_to_arguments=''):
         department_line = option.text.split('.')
         department_name = department_line[len(department_line) - 1].rstrip().lstrip()
         department_code = department_line[0].rstrip().lstrip()
-        if department_name != "Include All Departments":        # Don't add the first line to the dictionary (it's useless)
+        if department_name != "Include All Departments":                                # Don't add the first line to the dictionary (it's useless)
             department_options[department_code] = department_name
     select = None
 
@@ -45,9 +45,9 @@ def get_classes(path_to_arguments=''):
         input_arguments = []
         for line in input_file.readlines():
             input_arguments.append(line)
-        departments = str(input_arguments[0]).strip('\n')                 # List of departments will always be the first line in the *.txt file
+        departments = str(input_arguments[0]).strip('\n')                               # List of departments will always be the first line in the *.txt file
         departments = departments.split(",")
-        for i in range(1, len(input_arguments)):                          # Each line following contains courses per department
+        for i in range(1, len(input_arguments)):                                        # Each line following contains courses per department
             courses.append(input_arguments[i].strip('\n'))
 
     except FileNotFoundError:
@@ -61,15 +61,15 @@ def get_classes(path_to_arguments=''):
     # Change option to only include courses if there is some space
     capacity_menu = driver.find_element_by_name("FullCourses")
     select = Select(capacity_menu)
-    select.select_by_value("SkipFullWaitlist")        # Select option to show classes that are full if there is room on the wait list
+    select.select_by_value("SkipFullWaitlist")                                          # Select option to show classes that are full if there is room on the wait list
     #select.select_by_value("FullOnly")
     select = None
 
     # good_html = css_soup_for_a_department.prettify()
     # print(good_html)
 
-    all_courses = []                    # Keep track of all courses while web-scraping the data
-    i = 0                               # Keep track of which courses are with which department
+    all_courses = []                                                                    # Keep track of all courses while web-scraping the data
+    i = 0                                                                               # Keep track of which courses are with which department
 
     for department in departments:
         try:

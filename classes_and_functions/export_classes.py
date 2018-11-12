@@ -1,12 +1,53 @@
 from openpyxl import load_workbook  # Output schedules to an Excel sheet
 
 
+def change_time_to_normal(class_list):
+    """
+    A function to change all the time to standard time as opposed to military time.
+
+    :param class_list: A list of Class objects.
+    :return:
+    """
+    for _class in class_list:
+        _class.update_time_to_normal_format()
+
+
+def export_text(term, working_schedule):
+    """
+    This function will export classes to a text file so that users can read it.
+
+    :param term: The term of which the classes were scraped from.
+    :param working_schedule: Working schedules that have non-conflicting classes.
+    :return: Nothing
+    """
+    file = open('class_schedule.txt', 'w')
+    counter = 1
+    file.write(term + '\n')
+    for schedule in working_schedule:
+        file.write('Potential Schedule #' + str(counter) + '\n')
+        class_list_normal_clock = schedule.get_class_list()
+        change_time_to_normal(class_list_normal_clock)
+        for _class in class_list_normal_clock:
+            file.write(str(_class.code) + ', '
+                       + _class.name_of_course + '-'
+                       + _class.type_of_class + ', '
+                       + _class.instructor + ', '
+                       + _class.days + ' '
+                       + _class.normal_time_start + ' - '
+                       + _class.normal_time_end + ' \n')
+        counter += 1
+        file.write('\n')
+    file.close()
+
+
 def export_excel(term, working_schedule):
     """
     IN PROGRESS
-    :param working_schedule: A Schedule object
-    :return:
+    :param term: A string representing the term of the web-scraped classes.
+    :param working_schedule: A Schedule object.
+    :return: Nothing
     """
+
     workbook_for_classes = load_workbook('../Schedule_Template.xlsx')
     # workbook_for_finals = load_workbook('Schedule_Template.xlsx')
     class_list_sheet_for_classes = workbook_for_classes['Class List']
@@ -68,42 +109,3 @@ def export_excel(term, working_schedule):
 
     workbook_for_classes.save('../Class Schedule - ' + term + ".xlsx")
     # workbook_for_finals.save('Finals Schedule - ' + term + ".xlsx")
-
-
-def change_time_to_normal(class_list):
-    """
-    A function to change all the time to standard time as opposed to military time.
-
-    :param class_list: A list of Class objects.
-    :return:
-    """
-    for _class in class_list:
-        _class.update_time_to_normal_format()
-
-
-def export_text(term, working_schedule):
-    """
-    This function will export classes to a text file so that users can read it.
-
-    :param term: The term of which the classes were scraped from.
-    :param working_schedule: Working schedules that have non-conflicting classes.
-    :return: Nothing
-    """
-    file = open('class_schedule.txt', 'w')
-    counter = 1
-    file.write(term + '\n')
-    for schedule in working_schedule:
-        file.write('Potential Schedule #' + str(counter) + '\n')
-        class_list_normal_clock = schedule.get_class_list()
-        change_time_to_normal(class_list_normal_clock)
-        for _class in class_list_normal_clock:
-            file.write(str(_class.code) + ', '
-                       + _class.name_of_course + '-'
-                       + _class.type_of_class + ', '
-                       + _class.instructor + ', '
-                       + _class.days + ' '
-                       + _class.normal_time_start + ' - '
-                       + _class.normal_time_end + ' \n')
-        counter += 1
-        file.write('\n')
-    file.close()

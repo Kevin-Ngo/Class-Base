@@ -35,7 +35,7 @@ class Course:
         self.discussions = False
         self.labs = False
         self.need_both = False
-        self.number_of_choices = 100                    # Initialized to a large number so that the lowest will be assigned to it later (see add_class)
+        self.number_of_choices = 100
         self.number_of_choices_for_lecture = 0
         self.number_of_choices_for_discussion = 0
         self.number_of_choices_for_lab = 0
@@ -113,13 +113,10 @@ class Course:
         combined_classes = []
         for _class in self.lab_classes:
             combined_classes.append(_class)
-
         for _class in self.discussion_classes:
             combined_classes.append(_class)
-
         for _class in self.lecture_classes:
             combined_classes.append(_class)
-
         return combined_classes
 
     def has_discussion(self):
@@ -175,13 +172,12 @@ class Course:
             self.number_of_choices_for_lab += 1
             if self.number_of_choices_for_lab <= self.number_of_choices:
                 self.number_of_choices = self.number_of_choices_for_lab
-
         if (self.labs is True) and (self.discussions is True):
             self.need_both = True
 
     def get_type_with_least_choices(self):
         """
-        A function to return the type of class with the least amount of choices (i.e. priotitized in scheduling precedence).
+        A function to return the type of class with the least amount of choices (i.e. prioritized in scheduling precedence).
 
         :return: A list of the classes with the least amount of choices, as well as it's type.
         """

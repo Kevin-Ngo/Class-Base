@@ -1,6 +1,6 @@
 import numpy as np                                              # For more statistical functions
 from operator import attrgetter as atg                          # A way to sort custom objects
-from classes_and_functions import schedule as sch
+from classes_and_functions import schedule as sch               # Schedule functions
 
 
 class Evolution:
@@ -43,6 +43,7 @@ class Evolution:
 
         :return: A list of 'Schedule' objects that contain classes but no fitness score or marked list.
         """
+
         population = []
         for x in range(self.population_size):                                                                   # Do this N times where N = desired size of population
             individual = []
@@ -68,7 +69,7 @@ class Evolution:
         so that when the genetic algorithm selects the best parents, this will have a lower chance of being selected to "pass its genes" a.k.a classes.
 
         :param schedule: A list of class objects that collectively represent a schedule.
-        :return: None
+        :return: Nothing
         """
 
         from genetic_algorithm.class_schedule_solver import is_between                                          # Function to check if classes conflict - late import to prevent circular importing
@@ -114,7 +115,7 @@ class Evolution:
 
         :param selected_parents: A list of schedules that represent fit parents found in the population.
         :param randomly_retain: A probability of mutation.
-        :return:
+        :return: A list of schedule objects that represent the next generation.
         """
 
         children = []

@@ -1,6 +1,6 @@
-from genetic_algorithm.evolution import Evolution           # A Class to manage Evolution of Schedules
-from classes_and_functions.class_base_exceptions import WorkingScheduleNotFound   # Exception for finding working schedules
-import random                                               # To randomly test population
+from genetic_algorithm.evolution import Evolution                                       # A Class to manage Evolution of Schedules
+from classes_and_functions.class_base_exceptions import WorkingScheduleNotFound         # Exception for finding working schedules
+import random                                                                           # To randomly test population
 
 
 def get_schedules_using_ga(courses_per_department):
@@ -41,8 +41,8 @@ def print_one_individual(current_population):
     """
     This function is mainly a debugging feature that allows users to randomly inspect one individual from a population (the first one).
 
-    :param current_population: List of Schedule objects (together represent a population)
-    :return: None
+    :param current_population: List of Schedule objects (together represent a population).
+    :return: Nothing
     """
     schedule = random.choice(current_population)
     class_list = schedule.get_class_list()
@@ -56,7 +56,7 @@ def print_generation_information(population, generation_number):
 
     :param population: The population of current schedules (list of Schedule objects).
     :param generation_number: The n'th generation (an integer).
-    :return: None
+    :return: Average fitness score for the population
     """
 
     total = 0
@@ -73,7 +73,7 @@ def remove_conflicts(chosen_class, class_list):
 
     :param chosen_class: The class (Class object) that was chosen.
     :param class_list: The rest of the classes (list of Class objects).
-    :return: None
+    :return: Nothing
     """
 
     for _class in class_list.copy():
@@ -87,7 +87,7 @@ def print_conflicts(class_list):
     This function is a debugging function that prints out classes that conflict with each other.
 
     :param class_list: A list of classes that collectively are a schedule.
-    :return: None
+    :return: Nothing
     """
 
     for _class in class_list:

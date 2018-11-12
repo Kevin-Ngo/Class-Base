@@ -1,5 +1,5 @@
-import re                               # Use Regular Expressions to look for or fix specific string patterns
-from classes_and_functions import class_base_exceptions, department as crs
+import re                                                                                                               # Use Regular Expressions to look for or fix specific string patterns
+from classes_and_functions import class_base_exceptions, department as crs                                              # Import classes and functions to be used
 
 
 def scrape_classes(soup_obj):
@@ -83,8 +83,8 @@ def parse_day_and_time(days_and_time):
     This is a helper function to parse the string scraped from the html table. The string is scraped in the form: "MWF   9:00- 9:50"
     and is fixed to be a list in the form of ["MWF", "09:00", "09:50"].
 
-    :param days_and_time: The string containing the days and meeting times before being processed into a list
-    :return: A list containing the days and meeting times
+    :param days_and_time: The string containing the days and meeting times before being processed into a list.
+    :return: A list containing the days and meeting times.
     """
 
     if days_and_time == "TBA":                                                                                          # Sometimes the UCI class schedule is not fully published and they leave the times as "TBA"
@@ -119,6 +119,7 @@ def remove_prerequisite(name_of_course):
     :param name_of_course: A string that is the name of the course (with "(Prerequisite)").
     :return: The name of the course without the trailing word "(Prerequisite)".
     """
+
     split = name_of_course.split()
     name = ''
     _continue = True

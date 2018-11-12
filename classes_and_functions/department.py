@@ -1,4 +1,5 @@
 import bisect           # A way to easily keep custom objects sorted
+import re               # Use of regular expressions
 
 
 class Course:
@@ -99,6 +100,7 @@ class Course:
 
         :return: A String that is the name of the course.
         """
+
         return self.full_name_of_course
 
     def get_all_classes(self):
@@ -151,7 +153,7 @@ class Course:
         """
         A function to append a new class to the "classes" list.
 
-        :param type_of_class: A string that describes the type of class being added, it can be either 'Lec', 'Dis', or 'Lab'
+        :param type_of_class: A string that describes the type of class being added, it can be either 'Lec', 'Dis', or 'Lab'.
         :param new_class: A Class object that is to be added to the classes list.
         :return: Nothing
         """
@@ -177,20 +179,6 @@ class Course:
         if (self.labs is True) and (self.discussions is True):
             self.need_both = True
 
-    # def remove_faulty(self):
-    #     disc = self.discussion_classes.copy()
-    #     lec = self.lecture_classes.copy()
-    #     lab = self.lab_classes.copy()
-    #     for ddisc in disc:
-    #         if ddisc.start == 'TBA':
-    #             self.discussion_classes.remove(ddisc)
-    #     for llec in lec:
-    #         if llec.start == 'TBA':
-    #             self.lecture_classes.remove(llec)
-    #     for llab in lab:
-    #         if llab.start == 'TBA':
-    #             self.lab_classes.remove(llab)
-
     def get_type_with_least_choices(self):
         """
         A function to return the type of class with the least amount of choices (i.e. priotitized in scheduling precedence).
@@ -205,41 +193,13 @@ class Course:
         else:
             return self.lecture_classes.copy(), 'Lec'
 
-    def get_compliment_classes(self, class_type):
-        """
-        This function returns other classes that are required, given a class type. (i.e. If this course requires both a lab and discussion in addition to a lecture, when passed
-        'Lec', it will return both of the lists
-
-        :return: A list of complimentary-required classes, which can either be one list or two lists.
-        If the class type is 'Lec' then it will return either a lab or discussion, or both (Lab, Discussion).
-        If the class type is 'Dis' then it will return either a lecture or both (Lecture, Lab).
-        If the class type is 'Lab' then it will return either a lecture or both (Lecture, Discussion).
-        """
-
-        if class_type == 'Lec':
-            if self.need_both:
-                return self.lab_classes.copy(), self.discussion_classes.copy()
-            elif self.discussions:
-                return self.discussion_classes.copy()
-            elif self.labs:
-                return self.lab_classes.copy()
-        elif class_type == 'Dis':
-            if self.need_both:
-                return self.lecture_classes.copy(), self.lab_classes.copy()
-            else:
-                return self.lecture_classes.copy()
-        else:
-            if self.need_both():
-                return self.lecture_classes.copy(), self.discussion_classes.copy()
-            else:
-                return self.lecture_classes.copy()
-
     def get_number_of_required_classes(self):
         """
-        A function that returns the number of required classes for the course. (i.e. If it needs a discussion or lab in addition to the lecture or both)
+        A function that returns the number of required classes for the course. (i.e. If it needs a discussion or lab in addition to the lecture or both).
 
         :return: An integer that represents how many classes are required to successfully enroll into the class.
         """
+
         if self.need_both:
             return 3
         else:
@@ -268,9 +228,11 @@ class Class:
         capacity (integer): An integer that represents the maximum number of enrolled students allowed in the class.
         enrolled (integer): An integer that represents the current number of enrolled students in the class.
         wait_list (integer): An integer representing the number of people on the wait list for a class.
-        status (string): A string that represents the status of the class ('Open' or 'New Only')
+        status (string): A string that represents the status of the class ('Open' or 'New Only').
         percent_full (float): A float that represents the percentage full a class is, if over 80% full, will mark the
          class as nearly full.
+        normal_time_start (string): A string representing the starting time in standard time.
+        noormal_time_end (string): A string representing the ending time in standard time.
     """
 
     def __init__(self, name_of_course,
@@ -311,17 +273,25 @@ class Class:
 
         :return: A string that is the name of the course.
         """
+
         return self.name_of_course
 
     def get_days(self):
+        """
+        A function to return the days the class meets.
+
+        :return: A string that is the days the class meets.
+        """
+
         return self.days
 
     def get_type(self):
         """
-        A function that returns the type of class that the object is. (i.e. Lab, Lecture or Discussion)
+        A function that returns the type of class that the object is. (i.e. Lab, Lecture or Discussion).
 
         :return: A string that is either "Lec", "Lab" or "Dis".
         """
+
         return self.type_of_class
 
     def get_time(self):
@@ -330,12 +300,14 @@ class Class:
 
         :return: Two separate strings containing start and end times in the format HH:MM.
         """
+
         return self.start, self.end
 
     def update_time_to_normal_format(self):
         """
+        This function initializes attributes inside the main class, to also hold time in standard time rather than military time.
 
-        :return:
+        :return: None
         """
 
         if self.start == 'TBA':
@@ -348,14 +320,11 @@ class Class:
             if temp_time[0] > 12:
                 pm = True
                 temp_time[0] -= 12
-
             normal_time = str(temp_time[0]) + ':' + temp_time[1]
-
             if pm or temp_time[0] == 12:
                 normal_time += ' PM'
             else:
                 normal_time += ' AM'
-
             self.normal_time_start = normal_time
 
             normal_time = None
@@ -365,33 +334,21 @@ class Class:
             if temp_time[0] > 12:
                 pm = True
                 temp_time[0] -= 12
-
             normal_time = str(temp_time[0]) + ':' + temp_time[1]
-
             if pm or temp_time[0] == 12:
                 normal_time += ' PM'
             else:
                 normal_time += ' AM'
-
             self.normal_time_end = normal_time
 
     def get_days_as_list(self):
-        if self.start == 'TBA':
-            return ['']
-        if self.days[0] == 'M':
-            if len(self.days) == 1:
-                return ['M']
-            elif len(self.days) == 2:
-                return ['M', 'W']
-            elif len(self.days) == 3:
-                return ['M', 'W', 'F']
-        elif self.days[0] == 'T':
-            if len(self.days) == 2:
-                return ['Tu']
-            elif len(self.days) == 4:
-                return ['Tu', 'Th']
-        else:
-            return ['F']
+        """
+        Uses regular expressions to split days up by first seen uppercase, e.g. TuTh = ['Tu', 'Th'].
+
+        :return: A list of days that are split up by uppercase letters.
+        """
+
+        return re.findall('[A-Z][^A-Z]*', self.days)
 
     def __lt__(self, other):
         """

@@ -70,6 +70,12 @@ class Schedule:
         self.marked_list = marked_list
 
     def get_indices_of_marked(self):
+        """
+        A function to get the indices of classes that are marked.
+
+        :return: A list of integers that correspond to class-list indices of marked classes.
+        """
+
         if len(self.marked_list) > 0:
             index = 0
             index_list = []

@@ -1,8 +1,8 @@
 from selenium.webdriver.support.ui import Select        # Easy way to select options from menus on a website
 from bs4 import BeautifulSoup                           # Allows data to be extracted from websites
 from scrape import web_navigation                       # Provides user-defined functions to navigate the selenium webdriver
-from class_base_exceptions import InvalidCourse       # Exceptions while parsing
-from class_base_exceptions import InvalidDepartment   # Exceptions while parsing
+from classes_and_functions.class_base_exceptions import InvalidCourse         # Exceptions while parsing
+from classes_and_functions.class_base_exceptions import InvalidDepartment     # Exceptions while parsing
 from scrape.class_parser import scrape_classes          # Functions to scrape classes from UCI departments
 
 
@@ -97,8 +97,4 @@ def get_classes(path_to_arguments=''):
             break
 
     driver.close()
-    # for dpt in all_courses:
-    #     for course in dpt:
-    #         course.remove_faulty()
-
     return term, all_courses

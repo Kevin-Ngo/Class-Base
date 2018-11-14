@@ -7,7 +7,6 @@ This project was mainly created as a way for me (Kevin) to learn more about Pyth
 and algorithms frequently used in practice.
 
 ## Getting Started
-
 ### Prerequisites
 _Class-Base_ makes use of several open source modules to make web-scraping and text parsing simpler. In addition,
 because _Class-Base_ uses the _Selenium Webdriver_, out-of-the-box, _Class-Base_ only supports
@@ -23,7 +22,6 @@ through JavaScript rendered web pages while web-scraping.
 + [NumPy](http://www.numpy.org/) - because _Class-Base_ makes use of a Genetic Algorithm for optimizing
 class schedules, probability and randomization functions from NumPy are used. 
 > "NumPy is the fundamental package for scientific computing in Python."
-
 *To install these modules, paste the following lines into a command line*
 ~~~~
 pip install beautifulsoup4
@@ -39,7 +37,7 @@ pip install numpy
 After installing the required modules to run _Class-Base_, it is fairly simple to run. The script uses standard text files to
 communicate between user and script. The most difficult part of setting up would be properly formatting
 the text file. For any desired class schedule you must do the following:
-1. **Set up a text file that lists the department code and classes.** 
+1. **Set up a text file that lists the department code and classes.**
 
     *Formatting for this text file is extremely sensitive (pay attention to spaces and commas)*. When entering the list of departments (first line of text), see the _departments.txt_
     file that is found in the _help_ directory, for exact names of departments. After typing out the departments
@@ -56,7 +54,7 @@ the text file. For any desired class schedule you must do the following:
     This process may vary depending on your IDE; however, if you are using PyCharm by JetBrains, you can achieve this
     by following these steps:
     1. Click on the _Run_ tab
-    2. Select the option that says _Edit Configuations..._
+    2. Select the option that says _Edit Configurations..._
     3. Under _Template_ -> _Python_ check the box that says _Redirect input from_ and select or enter in
         the path to the desired department/classes text file
         
@@ -82,8 +80,9 @@ formatting of the spaces and commas are still sensitive)
 2. Steps to set up the configurations to automate passing text arguments:
 
     1. ![alt text](docs/Run.png)
-    2. ![alt text](docs/Edit Configurations....png)
-    3. ![alt text](docs/Redirect input from.png)
+    2. ![alt text](docs/edit_configurations.png)
+    3. ![alt text](docs/redirect_input_from.png)
+
 ## Contributing
 Anybody can contribute to this project to make it better. There are many features that would make this script more usable such as:
 1. Exporting to an Excel-Sheet that is programmed to display schedules visually

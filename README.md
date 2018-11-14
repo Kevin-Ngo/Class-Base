@@ -94,43 +94,29 @@ To contribute, just clone or fork the repository and request to merge it.
 
 ### Directories/Files
 1. *_classes_and_functions_* - contains functions and classes used by _Class-Base_.
-
-    1. _class_base_exceptions.py_ - is a *.py file that contains all of the exceptions used by _Class-Base_.
-    
-    2. _department.py_ - is a *.py file that contains two classes and their implementation, _Course_ and _Class_.
-    
-    3. _export_classes.py_ - is a *.py file that handles exporting schedules after they have been found.
-    
+    1. _class_base_exceptions.py_ - is a *.py file that contains all of the exceptions used by _Class-Base_.    
+    2. _department.py_ - is a *.py file that contains two classes and their implementation, _Course_ and _Class_.   
+    3. _export_classes.py_ - is a *.py file that handles exporting schedules after they have been found.    
     4. _schedule.py_ - is a *.py file that implements the Schedule class, this is used in the Genetic Algorithm implementation.
     
 2. *_genetic_algorithm_* - contains functions and classes used to run a Genetic Algorithm on classes.
-
     1. _class_schedule_solver.py_ - is a *.py file that abstracts schedule optimization, i.e. all Genetic Algorithm
-    functions run in this file.
-    
+    functions run in this file.   
     2. _evolution.py_ - is a *.py file that mimics natural selection functions used in schedule
     optimization.
     
 3. *_help_* - contains help/examples for running the script.
-
     1. _departments.txt_ - contains all department codes.
-    
     2. _format_of_argument_file.txt_ - contains the format for creating a desired class *.txt file.
-    
     3. _test_arguments_ - an example of a desired class arguments *.txt file.
 
 4. *_scrape_* - contains all of the *.py files used in web-scraping the UCI class search for classes.
-
     1. _class_parser.py_ - parses an HTML page (classes page) and organizes the data into a _Class_ data structure.
-    
     2. _class_scraper.py_ - navigates through the JavaScript rendered UCI page and selects classes to be scraped.
-    
     3. _web_navigation.py_ - used to reuse some _Selenium_ navigation code.
     
 5. *_web_drivers_* - holds the web drivers used by _Selenium_.
-
     1. chromedriver (MacOS)
-    
     2. chromedriver.exe (Windows)
     
 #### UML Class Diagram(s)

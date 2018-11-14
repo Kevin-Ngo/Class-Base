@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/release-v1.0-blue.svg)
 # Class-Base
-_Class-Base_ is a small project that involves web-scraping and and the use a Genetic Algorithm for schedule optimization.
+_Class-Base_ is a small project that involves web-scraping and and the use of a Genetic Algorithm for schedule optimization.
 The script helps to generate different class schedules for students at the University of California, Irvine.
 
 This project was mainly created as a way for me (Kevin) to learn more about Python as well as exploring different modules

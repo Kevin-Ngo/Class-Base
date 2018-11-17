@@ -1,9 +1,9 @@
 ![](https://img.shields.io/badge/release-v1.0-blue.svg)
 # Class-Base
-_Class-Base_ is a small project that involves web-scraping and and the use of a Genetic Algorithm for schedule optimization.
+_Class-Base_ is a project that involves small scale data mining and and the use of a Genetic Algorithm for schedule optimization.
 The script helps to generate different class schedules for students at the University of California, Irvine.
 
-This project was mainly created as a way for me (Kevin) to learn more about Python as well as exploring different modules
+This project was mainly created as a way for me (Kevin) to learn more about Python, data mining (through web-scraping) as well as exploring different modules
 and algorithms frequently used in practice.
 
 ## Getting Started
@@ -41,7 +41,7 @@ the text file. For any desired class schedule you must do the following:
 1. **Set up a text file that lists the department code and classes.**
 
     *Formatting for this text file is extremely sensitive (pay attention to spaces and commas)*. When entering the list of departments (first line of text), see the _departments.txt_
-    file that is found in the _help_ directory, for exact names of departments. After typing out the departments
+    file, found in the _help_ directory, for the exact names of departments. After typing out the departments
     that the desired classes are in, you can enter in the class names, respective to the order of entered departments.
     The formatting is as follows:
     ~~~~
@@ -70,7 +70,7 @@ and type what you would normally put in the desired department/class text file. 
 formatting of the spaces and commas are still sensitive)
 
 #### Examples
-1. For setting up a file, you can view an example in the _help_ directory, named _test_arguments.txt_ or look at the following:
+1. For formalities in setting up a file, you can view an example in the _help_ directory, named _test_arguments.txt_ or look at the following example:
     ~~~~
     I&C SCI,STATS,COMPSCI
     51, 139W
@@ -80,9 +80,11 @@ formatting of the spaces and commas are still sensitive)
 
 2. Steps to set up the configurations to automate passing text arguments:
 
-    1. ![alt text](docs/Run.png)
-    2. ![alt text](docs/edit_configurations.png)
-    3. ![alt text](docs/redirect_input_from.png)
+    ![alt text](docs/Run.png)
+    
+    ![alt text](docs/edit_configurations.png)
+    
+    ![alt text](docs/redirect_input_from.png)
 
 ## Contributing
 Anybody can contribute to this project to make it better. There are many features that would make this script more usable such as:
@@ -91,7 +93,8 @@ Anybody can contribute to this project to make it better. There are many feature
 3. Add support for prioritizing professors during selection process
 4. Take into account _RateMyProfessor_ reviews
 5. There is already a pre-formatted excel sheet to handle visualizing a schedule; however,
-    when outputting to this while using openpyxl, the write function does not properly update/recalculate the cell
+    when outputting to this using the openpyxl module, the write function does not properly update/recalculate the cell
+    after writing the text into the cell
 
 To contribute, just clone or fork the repository and request to merge it.
 
